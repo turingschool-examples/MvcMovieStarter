@@ -1,3 +1,10 @@
-﻿<h1>Movies</h1>
+﻿@model IEnumerable<MvcMovie.Models.Movie>
+
+<h1>Movies</h1>
 
 <p>All of the movies data will be shown here!</p>
+
+@foreach (var movie in Model)
+{
+    <p>Title: @movie.Title, Genre: @movie.Genre</p>
+}
