@@ -15,11 +15,8 @@ namespace MvcMovie.Controllers
 
         public IActionResult Index()
         {
-            foreach (var movie in _context.Movies)
-            {
-                Console.WriteLine($"Movie {movie.Id}, Title: {movie.Title}, Genre {movie.Genre}");
-            }
-            return View();
+            var movies = _context.Movies;
+            return View(movies);
         }
     }
 }
