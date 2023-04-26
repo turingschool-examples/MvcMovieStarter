@@ -8,8 +8,17 @@ builder.Services.AddControllersWithViews();
 
 // Register our Entity Framework context as a service and configure it to connect to a PostgreSQL database using the "MvcMovieDb" property in our appsettings.json. This allows us to use dependency injection to access our context from our controller.
 //More info can be found here: https://www.npgsql.org/efcore/api/Microsoft.Extensions.DependencyInjection.NpgsqlServiceCollectionExtensions.html
-builder.Services.AddDbContext<MvcMovieContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("MvcMovieDb") ?? throw new InvalidOperationException("Connection string 'MvcMovieDb' not found.")).UseSnakeCaseNamingConvention());
+builder.Services.AddDbContext<MvcMovieContext>(
+    options =>
+        options
+            .UseNpgsql(
+                builder.Configuration.GetConnectionString("MvcMovieDb")
+                    ?? throw new InvalidOperationException(
+                        "Connection string 'MvcMovieDb' not found."
+                    )
+            )
+            .UseSnakeCaseNamingConvention()
+);
 
 var app = builder.Build();
 
@@ -28,8 +37,20 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+
+//app.MapControllerRoute(
+//    name: "movies",
+//    pattern: "Movies/{id}",
+//    defaults: new { controller = "Movies", action = "Show" }
+//);
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllerRoute(
+//        name: "movies",
+//        pattern: "Movies/{id}",
+//        defaults: new { controller = "Movies", action = "Show" });
+//});
 
 app.Run();
