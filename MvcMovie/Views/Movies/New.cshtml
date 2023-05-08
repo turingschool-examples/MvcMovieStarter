@@ -1,13 +1,13 @@
-﻿@* This might need a lot of updating, might want to change it to a more controlled/strictly typed form *@
+﻿<h1>Add a Movie</h1>
 
-<form method="post" action="/Movies">
-    <div>
+<form method="post" action="/movies">
+    <div class="form-group">
         <label for="Title">Title:</label>
-        <input type="text" id="Title" name="Title" />
+        <input type="text" id="Title" name="Title"/>
     </div>
-    <div>
+    <div class="form-group">
         <label for="Genre">Genre:</label>
-        <textarea id="Genre" name="Genre"></textarea>
+        <input type="text" id="Genre" name="Genre" />
     </div>
     <button type="submit">Create Movie</button>
 </form>

@@ -39,18 +39,4 @@ app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
-//app.MapControllerRoute(
-//    name: "movies",
-//    pattern: "Movies/{id}",
-//    defaults: new { controller = "Movies", action = "Show" }
-//);
-
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapControllerRoute(
-//        name: "movies",
-//        pattern: "Movies/{id}",
-//        defaults: new { controller = "Movies", action = "Show" });
-//});
-
 app.Run();
