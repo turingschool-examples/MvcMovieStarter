@@ -1,0 +1,13 @@
+﻿<h1>Add a Review for @ViewData["MovieTitle"]</h1>
+
+<form method='post' action='/movies/@ViewData["MovieId"]/reviews'>
+    <div class='form-group'>
+        <label for='Rating'>Rating: </label>
+        <input type='number' id='Rating' name='Rating'/>
+    </div>
+    <div class='form-group'>
+        <label for='Content'>Review: </label>
+        <input type='textarea' id='Content' name='Content' />
+    </div>
+    <button type='submit'>Create Review</button>
+</form>

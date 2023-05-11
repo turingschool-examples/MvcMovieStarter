@@ -85,7 +85,7 @@ namespace MvcMovie.FeatureTests
             Assert.Contains("Genre: Science Fiction", html);
 
             // Assert that the movie was added to the database. In this situation the test is a bit redundant, but testing against what's in the database is a usefull testing tool to add to your toolbox.
-            var savedMovie = await context.Movies.FirstOrDefaultAsync(
+            var savedMovie = context.Movies.FirstOrDefault(
                 m => m.Title == "Back to the Future"
             );
             Assert.NotNull(savedMovie);

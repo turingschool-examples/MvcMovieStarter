@@ -1,0 +1,13 @@
+﻿@model List<Review>
+
+<h1>Reviews for @ViewData["MovieTitle"]</h1>
+<a href='/movies/@ViewData["MovieId"]/reviews/new'>Add a Review</a>
+
+<ul>
+@foreach (Review review in Model)
+{
+    <li>@review.Rating: @review.Content</li>
+}
+</ul>
+
+
