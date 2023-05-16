@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using MvcMovie.DataAccess;
 using MvcMovie.Models;
@@ -22,6 +23,7 @@ namespace MvcMovie.Controllers
         }
 
         // GET: /Movies/1
+        [HttpGet]
         [Route("Movies/{id:int}")]
         public IActionResult Show(int id)
         {
@@ -49,6 +51,26 @@ namespace MvcMovie.Controllers
 
             // Redirect to our route /movies/show and pass in the newMovieId for the id parameter
             return RedirectToAction("show", new { id = newMovieId });
+        }
+
+        // GET: /Movies/:id/edit
+        [Route("/Movies/{id:int}/edit")]
+        public IActionResult Edit(int id)
+        {
+            var movie = _context.Movies.Find(id);
+
+            return View(movie);
+        }
+
+        // PUT (via Post): /Movies/:id
+        [HttpPost]
+        [Route("/Movies/{id:int}")]
+        public IActionResult Update(Movie movie)
+        {
+            _context.Movies.Update(movie);
+            _context.SaveChanges();
+
+            return RedirectToAction("show", new { id = movie.Id });
         }
     }
 }

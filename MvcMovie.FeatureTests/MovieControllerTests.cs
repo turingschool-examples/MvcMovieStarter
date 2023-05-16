@@ -6,6 +6,7 @@ using System.Net;
 
 namespace MvcMovie.FeatureTests
 {
+    [Collection("Controller Tests")]
     public class MovieControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
@@ -90,6 +91,55 @@ namespace MvcMovie.FeatureTests
             );
             Assert.NotNull(savedMovie);
             Assert.Equal("Science Fiction", savedMovie.Genre);
+        }
+
+        [Fact]
+        public async Task Edit_ReturnsFormViewPrePopulated()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie movie = new Movie { Title = "Spaceballs", Genre = "Comedy" };
+            context.Movies.Add(movie);
+            context.SaveChanges();
+
+            // Act
+            var response = await client.GetAsync($"/movies/{movie.Id}/edit");
+            var html = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            Assert.Contains("Edit Movie", html);
+            Assert.Contains(movie.Title, html);
+            Assert.Contains(movie.Genre, html);
+        }
+
+        [Fact]
+        public async Task Update_SavesChangesToMovie()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie movie = new Movie { Title = "Goofy", Genre = "Comedy" };
+            context.Movies.Add(movie);
+            context.SaveChanges();
+
+            var formData = new Dictionary<string, string>
+            {
+                { "Title", "Goofy" },
+                { "Genre", "Documentary" }
+            };
+
+            // Act
+            var response = await client.PostAsync($"/movies/{movie.Id}", new FormUrlEncodedContent(formData));
+            var html = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Contains("Goofy", html);
+            Assert.Contains("Documentary", html);
+            Assert.DoesNotContain("Comedy", html);
         }
     }
 }

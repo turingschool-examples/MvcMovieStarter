@@ -57,5 +57,25 @@ namespace MvcMovie.Controllers
 
             return RedirectToAction("index", new { movieId = movie.Id });
         }
+
+        [HttpGet]
+        [Route("/Movies/{movieId:int}/reviews/{id:int}/edit")]
+        public IActionResult Edit(int movieId, int id)
+        {
+            var review = _context.Reviews.Find(id);
+
+            ViewData["movieId"] = movieId;
+            return View(review);
+        }
+
+        [HttpPost]
+        [Route("/Movies/{movieId:int}/reviews/{id:int}")]
+        public IActionResult Update(int movieId, int id, Review review)
+        {
+            _context.Reviews.Update(review);
+            _context.SaveChanges();
+
+            return RedirectToAction("index", new { movieId = movieId });
+        }
     }
 }

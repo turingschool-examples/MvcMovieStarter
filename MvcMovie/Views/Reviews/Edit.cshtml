@@ -1,0 +1,16 @@
+﻿@model Review
+
+<h1>Edit Review</h1>
+
+<form method='post' action='/movies/@ViewData["MovieId"]/reviews/@Model.Id'>
+    <div class='form-group'>
+        <label for='Rating'>Rating: </label>
+        <input type='number' id='Rating' name='Rating' value="@Model.Rating" />
+    </div>
+    <div class='form-group'>
+        <label for='Content'>Review: </label>
+        <input type='textarea' id='Content' name='Content' value="@Model.Content" />
+    </div>
+    <button type='submit'>Update Review</button>
+</form>
+
