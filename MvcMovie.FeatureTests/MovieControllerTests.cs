@@ -45,6 +45,42 @@ namespace MvcMovie.FeatureTests
         }
 
         [Fact]
+        public async Task Index_ContainsFilterForEachGenres()
+        {
+            var context = GetDbContext();
+            context.Movies.Add(new Movie { Genre = "Comedy", Title = "Spaceballs" });
+            context.Movies.Add(new Movie { Genre = "Comedy", Title = "Young Frankenstein" });
+            context.Movies.Add(new Movie { Genre = "Kids", Title = "Mulan" });
+            context.SaveChanges();
+
+            var client = _factory.CreateClient();
+            var response = await client.GetAsync("/Movies");
+            var html = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("<a href=\"/movies?genre=Comedy\">Comedy</a>", html);
+            Assert.Contains("<a href=\"/movies?genre=Kids\">Kids</a>", html);
+            Assert.DoesNotContain("<a href=\"/movies?genre=Spaceballs\">Spaceballs</a>", html);
+        }
+
+        [Fact]
+        public async Task Index_UsesGenreQueryStringParamToFilter()
+        {
+            var context = GetDbContext();
+            context.Movies.Add(new Movie { Genre = "Comedy", Title = "Spaceballs" });
+            context.Movies.Add(new Movie { Genre = "Comedy", Title = "Young Frankenstein" });
+            context.Movies.Add(new Movie { Genre = "Kids", Title = "Mulan" });
+            context.SaveChanges();
+
+            var client = _factory.CreateClient();
+            var response = await client.GetAsync("/Movies?genre=Comedy");
+            var html = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("Spaceballs", html);
+            Assert.Contains("Young Frankenstein", html);
+            Assert.DoesNotContain("Mulan", html);
+        }
+
+        [Fact]
         public async Task New_ReturnsFormView()
         {
             // Arrange

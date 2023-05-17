@@ -1,24 +1,43 @@
-﻿@model IEnumerable<MvcMovie.Models.Movie>
+﻿@model IEnumerable<Movie>
+
+@* 
+By default, the values stored in ViewData are of type object, which allows flexibility in storing various types of data.
+
+When you pass a list to ViewData["AllGenres"], it gets stored as an object in ViewData. Therefore, when you retrieve it using ViewData["AllGenres"], the type of the value is object, not specifically List<string>.
+
+To work with the list as a List<string>, you need to explicitly cast the value to the desired type.
+
+The null coalescing operator ?? is used to provide a default value of an empty List<string>() in case the cast to List<string> results in null. This ensures that allGenres will always have a valid reference to a list, even if ViewData["AllGenres"] is null or not of the expected type.
+*@
 
 @{
-    var request = Context.Request;
+    List<string> allGenres = ViewData["AllGenres"] as List<string> ?? new List<string>();
 }
 
 <h1>Movies</h1>
 
-<p>All of the movies data will be shown here!</p>
-//pull out genre from view data.
-<form method="get" action="/movies">
-    <label for="Genre">Genre:</label>
-    @*I think we do want the value they searched for to show up in the searchbar, this feels a bit hacky. It looks like the better way is to store the search information in the ViewData as in this example, not sure if that's too much though.... https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-7.0#add-sorting-functionality-to-the-index-method*@
-    <input type="text" name="Genre" id="Genre" value="@request.Query["Genre"]" />
+<h2>Genre Filter</h2>
 
-    <button type="submit">Filter</button>
-</form>
+@if (ViewData["SearchGenre"] != null)
+{
+    <p>Filtering by: <strong>@ViewData["SearchGenre"]</strong> </p>
+}
+  
+<h3>Genres:</h3>
 
-@* I know we're trying to stay away from using the asp- shortcuts, but this way is so much nicer than everythign else I've seen so might be an ok time to introduce?*@
- <a href="/movies?Genre=Kids">Kids</a>
- <a href="/movies">Clear All Filters</a>
+@if (allGenres.Count > 0)
+{
+    foreach (var genre in allGenres)
+    {
+        <a href="/movies?genre=@genre">@genre</a>
+    }
+} else
+{
+    <p>No genres available.</p>
+}
+<br />
+<a href="/movies">Clear Filter</a>
+
 <br/>
 <br />
 
@@ -26,3 +45,6 @@
 {
     <p>Title: @movie.Title, Genre: @movie.Genre, Id: @movie.Id</p>
 }
+
+
+

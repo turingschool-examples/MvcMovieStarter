@@ -15,18 +15,16 @@ namespace MvcMovie.Controllers
         }
 
         // GET: /Movies
-        public IActionResult Index(string genre)
+        public IActionResult Index(string? genre)
         {
-            Console.WriteLine("YAY the genre!");
-            Console.WriteLine(genre);
-            //I don't know if this asEnumerable is good practice, but it works...
             var movies = _context.Movies.AsEnumerable();
             if (genre != null)
             {
-                //Add the genre to view data
                 movies = movies.Where(m => m.Genre == genre);
+                ViewData["SearchGenre"] = genre;
             }
-            //Stretch goal of capitalization problems...
+
+            ViewData["AllGenres"] = _context.Movies.Select(m => m.Genre).Distinct().ToList();
 
             return View(movies);
         }
