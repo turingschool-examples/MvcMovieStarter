@@ -1,8 +1,26 @@
 ﻿@model IEnumerable<MvcMovie.Models.Movie>
 
+@{
+    var request = Context.Request;
+}
+
 <h1>Movies</h1>
 
 <p>All of the movies data will be shown here!</p>
+//pull out genre from view data.
+<form method="get" action="/movies">
+    <label for="Genre">Genre:</label>
+    @*I think we do want the value they searched for to show up in the searchbar, this feels a bit hacky. It looks like the better way is to store the search information in the ViewData as in this example, not sure if that's too much though.... https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/sort-filter-page?view=aspnetcore-7.0#add-sorting-functionality-to-the-index-method*@
+    <input type="text" name="Genre" id="Genre" value="@request.Query["Genre"]" />
+
+    <button type="submit">Filter</button>
+</form>
+
+@* I know we're trying to stay away from using the asp- shortcuts, but this way is so much nicer than everythign else I've seen so might be an ok time to introduce?*@
+ <a href="/movies?Genre=Kids">Kids</a>
+ <a href="/movies">Clear All Filters</a>
+<br/>
+<br />
 
 @foreach (var movie in Model)
 {
