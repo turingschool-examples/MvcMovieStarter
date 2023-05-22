@@ -6,7 +6,7 @@
 <ul>
 @foreach (Review review in Model)
 {
-    <li>@review.Rating: @review.Content</li>
+    <li>@review.Rating: @review.Content <a href="/movies/@ViewData["MovieId"]/reviews/@review.Id/edit">Edit</a></li>
 }
 </ul>
 
