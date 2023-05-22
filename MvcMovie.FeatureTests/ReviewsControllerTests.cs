@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace MvcMovie.FeatureTests
 {
     [Collection("Controller Tests")]
-    public class ReviewsControllerTests :IClassFixture<WebApplicationFactory<Program>>
+    public class ReviewsControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
 
@@ -45,7 +45,11 @@ namespace MvcMovie.FeatureTests
             context.Movies.Add(youngFrankenstein);
             context.SaveChanges();
             Review review1 = new Review { Rating = 5, Content = "Better than Star Wars" };
-            Review review2 = new Review { Rating = 4, Content = "Good. But, when will then be now?" };
+            Review review2 = new Review
+            {
+                Rating = 4,
+                Content = "Good. But, when will then be now?"
+            };
             spaceballs.Reviews.Add(review1);
             spaceballs.Reviews.Add(review2);
             context.SaveChanges();
@@ -110,11 +114,17 @@ namespace MvcMovie.FeatureTests
                 { "Content", "Better than Star Wars" }
             };
 
-            var response = await client.PostAsync($"/movies/{spaceballs.Id}/reviews", new FormUrlEncodedContent(formData));
+            var response = await client.PostAsync(
+                $"/movies/{spaceballs.Id}/reviews",
+                new FormUrlEncodedContent(formData)
+            );
             var html = await response.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Contains($"/Movies/{spaceballs.Id}/reviews", response.RequestMessage.RequestUri.ToString());
+            Assert.Contains(
+                $"/Movies/{spaceballs.Id}/reviews",
+                response.RequestMessage.RequestUri.ToString()
+            );
             Assert.Contains("5: Better than Star Wars", html);
             Assert.DoesNotContain("4: Good. But, when will then be now?", html);
         }
@@ -126,12 +136,19 @@ namespace MvcMovie.FeatureTests
             var client = _factory.CreateClient();
 
             Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
-            Review review = new Review { Content = "Great", Rating = 4, Movie = spaceballs };
+            Review review = new Review
+            {
+                Content = "Great",
+                Rating = 4,
+                Movie = spaceballs
+            };
             context.Movies.Add(spaceballs);
             context.Reviews.Add(review);
             context.SaveChanges();
 
-            var response = await client.GetAsync($"/Movies/{spaceballs.Id}/Reviews/{review.Id}/edit");
+            var response = await client.GetAsync(
+                $"/Movies/{spaceballs.Id}/Reviews/{review.Id}/edit"
+            );
             var html = await response.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -147,7 +164,12 @@ namespace MvcMovie.FeatureTests
             var client = _factory.CreateClient();
 
             Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
-            Review review = new Review { Content = "Great", Rating = 4, Movie = spaceballs };
+            Review review = new Review
+            {
+                Content = "Great",
+                Rating = 4,
+                Movie = spaceballs
+            };
             context.Movies.Add(spaceballs);
             context.Reviews.Add(review);
             context.SaveChanges();
@@ -158,13 +180,84 @@ namespace MvcMovie.FeatureTests
                 { "Content", "Better than Star Wars" }
             };
 
-            var response = await client.PostAsync($"/movies/{spaceballs.Id}/reviews/{review.Id}", new FormUrlEncodedContent(formData));
+            var response = await client.PostAsync(
+                $"/movies/{spaceballs.Id}/reviews/{review.Id}",
+                new FormUrlEncodedContent(formData)
+            );
             var html = await response.Content.ReadAsStringAsync();
 
             response.EnsureSuccessStatusCode();
             Assert.Contains("Better than Star Wars", html);
             Assert.Contains("5", html);
             Assert.DoesNotContain("Great", html);
+        }
+
+        [Fact]
+        public async Task Delete_RemovesReviewFromIndexPage()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
+            Review review = new Review
+            {
+                Content = "Great",
+                Rating = 4,
+                Movie = spaceballs
+            };
+            context.Movies.Add(spaceballs);
+            context.Reviews.Add(review);
+            context.SaveChanges();
+
+            // Act
+            var response = await client.PostAsync(
+                $"/movies/{spaceballs.Id}/reviews/{review.Id}/delete",
+                null
+            );
+            var html = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.DoesNotContain("Great", html);
+        }
+
+        [Fact]
+        public async Task Delete_OnlyDeletesOneReview()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
+            Review review = new Review
+            {
+                Content = "Great",
+                Rating = 4,
+                Movie = spaceballs
+            };
+            Review review2 = new Review
+            {
+                Content = "Just ok",
+                Rating = 2,
+                Movie = spaceballs
+            };
+            context.Movies.Add(spaceballs);
+            context.Reviews.Add(review);
+            context.Reviews.Add(review2);
+            context.SaveChanges();
+
+            // Act
+            var response = await client.PostAsync(
+                $"/movies/{spaceballs.Id}/reviews/{review.Id}/delete",
+                null
+            );
+            var html = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.DoesNotContain("Great", html);
+            Assert.Contains("Just ok", html);
         }
     }
 }

@@ -86,9 +86,7 @@ namespace MvcMovie.FeatureTests
             Assert.Contains("Genre: Science Fiction", html);
 
             // Assert that the movie was added to the database. In this situation the test is a bit redundant, but testing against what's in the database is a usefull testing tool to add to your toolbox.
-            var savedMovie = context.Movies.FirstOrDefault(
-                m => m.Title == "Back to the Future"
-            );
+            var savedMovie = context.Movies.FirstOrDefault(m => m.Title == "Back to the Future");
             Assert.NotNull(savedMovie);
             Assert.Equal("Science Fiction", savedMovie.Genre);
         }
@@ -132,7 +130,10 @@ namespace MvcMovie.FeatureTests
             };
 
             // Act
-            var response = await client.PostAsync($"/movies/{movie.Id}", new FormUrlEncodedContent(formData));
+            var response = await client.PostAsync(
+                $"/movies/{movie.Id}",
+                new FormUrlEncodedContent(formData)
+            );
             var html = await response.Content.ReadAsStringAsync();
 
             // Assert
@@ -140,6 +141,81 @@ namespace MvcMovie.FeatureTests
             Assert.Contains("Goofy", html);
             Assert.Contains("Documentary", html);
             Assert.DoesNotContain("Comedy", html);
+        }
+
+        [Fact]
+        public async Task Delete_RemovesMovieFromIndexPage()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie movie = new Movie { Title = "Goofy", Genre = "Comedy" };
+            context.Movies.Add(movie);
+            context.SaveChanges();
+
+            // Act
+            var response = await client.PostAsync($"/movies/delete/{movie.Id}", null);
+            var html = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.DoesNotContain("Goofy", html);
+        }
+
+        [Fact]
+        public async Task Delete_OnlyDeletesOneMovie()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie movieGoofy = new Movie { Title = "Goofy", Genre = "Comedy" };
+            context.Movies.Add(movieGoofy);
+            Movie movieElf = new Movie { Title = "Elf", Genre = "Holiday" };
+            context.Movies.Add(movieElf);
+            context.SaveChanges();
+
+            // Act
+            var response = await client.PostAsync($"/movies/delete/{movieGoofy.Id}", null);
+            var html = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Contains("Elf", html);
+        }
+
+        [Fact]
+        public async Task Delete_RemovesAllDeletedMoviesReviews()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
+            Review review = new Review
+            {
+                Content = "Great",
+                Rating = 4,
+                Movie = spaceballs
+            };
+            Review review2 = new Review
+            {
+                Content = "Just ok",
+                Rating = 2,
+                Movie = spaceballs
+            };
+            context.Movies.Add(spaceballs);
+            context.Reviews.Add(review);
+            context.Reviews.Add(review2);
+            context.SaveChanges();
+
+            // Act
+            var response = await client.PostAsync($"/movies/delete/{spaceballs.Id}", null);
+
+            // Assert
+            var savedMovie = context.Reviews.FirstOrDefault(r => r.Movie == spaceballs);
+            Assert.Null(savedMovie);
         }
     }
 }

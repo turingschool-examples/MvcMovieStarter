@@ -18,12 +18,9 @@ namespace MvcMovie.Controllers
         [Route("Movies/{movieId:int}/reviews")]
         public IActionResult Index(int movieId)
         {
-            var movie = _context.Movies
-                .Where(m => m.Id == movieId)
-                .Include(m => m.Reviews)
-                .First(); 
+            var movie = _context.Movies.Where(m => m.Id == movieId).Include(m => m.Reviews).First();
             var reviews = movie.Reviews;
-            
+
             ViewData["MovieTitle"] = movie.Title;
             ViewData["MovieId"] = movie.Id;
             return View(reviews);
@@ -33,10 +30,7 @@ namespace MvcMovie.Controllers
         [Route("Movies/{movieId:int}/reviews/new")]
         public IActionResult New(int movieId)
         {
-            var movie = _context.Movies
-                .Where(m => m.Id == movieId)
-                .Include(m => m.Reviews)
-                .First();
+            var movie = _context.Movies.Where(m => m.Id == movieId).Include(m => m.Reviews).First();
 
             ViewData["MovieTitle"] = movie.Title;
             ViewData["MovieId"] = movie.Id;
@@ -48,10 +42,7 @@ namespace MvcMovie.Controllers
         [Route("/Movies/{movieId:int}/reviews")]
         public IActionResult Create(int movieId, Review review)
         {
-            var movie = _context.Movies
-                .Where(m => m.Id == movieId)
-                .Include(m => m.Reviews)
-                .First();
+            var movie = _context.Movies.Where(m => m.Id == movieId).Include(m => m.Reviews).First();
             movie.Reviews.Add(review);
             _context.SaveChanges();
 
@@ -73,6 +64,18 @@ namespace MvcMovie.Controllers
         public IActionResult Update(int movieId, int id, Review review)
         {
             _context.Reviews.Update(review);
+            _context.SaveChanges();
+
+            return RedirectToAction("index", new { movieId = movieId });
+        }
+
+        [HttpPost]
+        [Route("/Movies/{movieId:int}/reviews/{reviewId:int}/delete")]
+        public IActionResult Delete(int movieId, int reviewId)
+        {
+            var review = _context.Reviews.Find(reviewId);
+
+            _context.Reviews.Remove(review);
             _context.SaveChanges();
 
             return RedirectToAction("index", new { movieId = movieId });

@@ -2,9 +2,16 @@
 
 <h1>Movies</h1>
 
-<p>All of the movies data will be shown here!</p>
-
 @foreach (var movie in Model)
 {
-    <p>Title: @movie.Title, Genre: @movie.Genre, Id: @movie.Id</p>
+    <div class="movie-info">
+        <p>Title: @movie.Title, Genre: @movie.Genre, Id: @movie.Id</p>
+
+        <form action="/Movies/Delete/@movie.Id" method="post">
+            <button type="submit">Delete</button>
+        </form>
+    </div>
 }
+
+
+

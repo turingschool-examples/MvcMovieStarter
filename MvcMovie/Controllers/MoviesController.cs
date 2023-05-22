@@ -72,5 +72,17 @@ namespace MvcMovie.Controllers
 
             return RedirectToAction("show", new { id = movie.Id });
         }
+
+        // DELETE (via Post): /Movies/Delete/:id
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var movie = _context.Movies.Find(id);
+
+            _context.Movies.Remove(movie);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 }

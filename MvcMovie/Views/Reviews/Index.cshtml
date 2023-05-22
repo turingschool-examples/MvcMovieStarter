@@ -5,8 +5,12 @@
 
 <ul>
 @foreach (Review review in Model)
-{
-    <li>@review.Rating: @review.Content</li>
+{   
+        <li>@review.Rating: @review.Content
+            <form action="/movies/@ViewData["MovieId"]/reviews/@review.Id/delete" method="post">
+            <button type="submit">Delete</button>
+        </form>
+        </li>
 }
 </ul>
 
