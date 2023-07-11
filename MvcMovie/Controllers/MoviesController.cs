@@ -18,5 +18,12 @@ namespace MvcMovie.Controllers
             var movies = _context.Movies;
             return View(movies);
         }
+
+        [Route("/movies/{id:int}")]
+        public IActionResult Show(int id)
+        {
+            var movie = _context.Movies.Find(id);
+            return View(movie);
+        }
     }
 }
