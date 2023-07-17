@@ -13,7 +13,6 @@ namespace MvcMovie.Controllers
         }
 
         // GET: /Movies/
-
         public IActionResult Index()
         {
             foreach (var movie in _context.Movies)
