@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MvcMovie.Controllers;
+using MvcMovie.DataAccess;
 
 namespace MvcMovie.FeatureTests
 {
@@ -25,6 +26,10 @@ namespace MvcMovie.FeatureTests
                 {
                     webBuilder.ConfigureServices(services =>
                     {
+                        //THIS IS THE CODE TO ADD:
+                        services.AddDbContext<MvcMovieContext>(options =>
+                            options.UseInMemoryDatabase("TestDatabase"));
+
                         services.AddControllersWithViews()
                             .AddApplicationPart(typeof(HomeController).Assembly);
                     });
