@@ -38,5 +38,13 @@ namespace MvcMovie.Controllers
             // Redirect to our route /movies/show and pass in the newMovieId for the id parameter
             return RedirectToAction("show", new { id = newMovieId });
         }
+
+        // GET: /Movies/<id>
+        [Route("Movies/{id:int}")]
+        public IActionResult Show(int id)
+        {
+            var movie = _context.Movies.Find(id);
+            return View(movie);
+        }
     }
 }
