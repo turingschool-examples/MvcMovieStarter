@@ -1,3 +1,11 @@
-﻿<h1>Movies</h1>
+﻿// This line tells us what data is getting passed to our View
+@model IEnumerable<MvcMovie.Models.Movie>
 
-<p>All of the movies will be shown here!</p>
+<h1>Movies</h1>
+
+<p>All of the movies data will be shown here!</p>
+
+@foreach (var movie in Model)
+{
+    <p>Title: @movie.Title, Genre: @movie.Genre</p>
+}
