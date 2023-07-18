@@ -7,6 +7,7 @@ namespace MvcMovie.DataAccess
     {
 
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         public MvcMovieContext(DbContextOptions<MvcMovieContext> options) : base(options)
         {

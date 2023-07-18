@@ -1,0 +1,10 @@
+﻿@model MvcMovie.Models.Movie
+
+<h1>@Model.Title</h1>
+
+<p>All of the reviews data will be shown here!</p>
+
+@foreach (var review in Model.Reviews)
+{
+    <p>Rating: @review.Rating, Content: @review.Content</p>
+}

@@ -52,5 +52,6 @@ namespace MvcMovie.FeatureTests
             Assert.DoesNotContain("Elf", html);
 
         }
+
     }
 }
