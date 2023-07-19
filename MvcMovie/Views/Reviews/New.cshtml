@@ -1,0 +1,15 @@
+﻿@model MvcMovie.Models.Movie
+
+<h1>Add a Review for @Model.Title</h1>
+
+<form method='post' action='/movies/@Model.Id/reviews'>
+	<div class="form-group">
+		<label for="Rating">Rating:</label>
+		<input type="number" id="Rating" name="Rating" min="0" max="5" value="5" />
+	</div>
+	<div class="form-group">
+		<label for="Content">Content:</label>
+		<input type="text" id="Content" name="Content" />
+	</div>
+	<button type="submit">Create Rating</button>
+</form>
