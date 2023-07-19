@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MvcMovie.DataAccess;
+using MvcMovie.Models;
 
 namespace MvcMovie.Controllers
 {
@@ -36,5 +37,19 @@ namespace MvcMovie.Controllers
 
             return View(movie);
         }
-    }
+
+		[HttpPost]
+		[Route("/Movies/{movieId:int}/reviews")]
+		public IActionResult Create(int movieId, Review review)
+		{
+			var movie = _context.Movies
+				.Where(m => m.Id == movieId)
+				.Include(m => m.Reviews)
+				.First();
+			movie.Reviews.Add(review);
+			_context.SaveChanges();
+
+			return RedirectToAction("index", new { movieId = movie.Id });
+		}
+	}
 }

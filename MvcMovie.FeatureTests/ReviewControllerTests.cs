@@ -97,6 +97,31 @@ namespace MvcMovie.FeatureTests
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Contains($"<form method='post' action='/movies/{spaceballs.Id}/reviews'", html);
         }
-    }
+
+		[Fact]
+		public async Task Create_AddsReview_RedirectsToMovieReviewsIndex()
+		{
+			var context = GetDbContext();
+			var client = _factory.CreateClient();
+
+			Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
+			context.Movies.Add(spaceballs);
+			context.SaveChanges();
+
+			var formData = new Dictionary<string, string>
+	        {
+		        { "Rating", "5" },
+		        { "Content", "Better than Star Wars" }
+	        };
+
+			var response = await client.PostAsync($"/movies/{spaceballs.Id}/reviews", new FormUrlEncodedContent(formData));
+			var html = await response.Content.ReadAsStringAsync();
+
+			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+			Assert.Contains($"/Movies/{spaceballs.Id}/reviews", response.RequestMessage.RequestUri.ToString());
+			Assert.Contains("5: Better than Star Wars", html);
+			Assert.DoesNotContain("4: Good. But, when will then be now?", html);
+		}
+	}
 
 }
