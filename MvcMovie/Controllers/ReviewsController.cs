@@ -22,8 +22,17 @@ namespace MvcMovie.Controllers
                 .Include(m => m.Reviews)
                 .First();
 
-            //var movie2 = _context.Movies
-            //    .Find(movieId)
+            return View(movie);
+        }
+
+        // GET: /movies/:movieId/reviews/new
+        [Route("Movies/{movieId:int}/reviews/new")]
+        public IActionResult New(int movieId)
+        {
+            var movie = _context.Movies
+                .Where(m => m.Id == movieId)
+                .Include(m => m.Reviews)
+                .First();
 
             return View(movie);
         }
