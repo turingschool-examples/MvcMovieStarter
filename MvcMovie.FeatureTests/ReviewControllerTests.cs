@@ -64,6 +64,39 @@ namespace MvcMovie.FeatureTests
             Assert.DoesNotContain(youngFrankenstein.Title, html);
             Assert.DoesNotContain(review3.Content, html);
         }
+
+        [Fact]
+        public async Task Index_ReturnsViewWithLinkToNewForm()
+        {
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
+            context.Movies.Add(spaceballs);
+            context.SaveChanges();
+
+            var response = await client.GetAsync($"/Movies/{spaceballs.Id}/Reviews");
+            var html = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains($"<a href='/movies/{spaceballs.Id}/reviews/new'>", html);
+        }
+
+        [Fact]
+        public async Task New_ReturnsViewWithForm()
+        {
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
+            context.Movies.Add(spaceballs);
+            context.SaveChanges();
+
+            var response = await client.GetAsync($"/Movies/{spaceballs.Id}/Reviews/New");
+            var html = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains($"<form method='post' action='/movies/{spaceballs.Id}/reviews'", html);
+        }
     }
 
 }
