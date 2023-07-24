@@ -1,0 +1,15 @@
+﻿@model Review
+
+<h1>Edit Review for @Model.Movie.Title</h1>
+
+<form method='post' action='/movies/@Model.Movie.Id/reviews'>
+	<div class="form-group">
+		<label for="Rating">Rating:</label>
+		<input type="number" id="Rating" name="Rating" min="0" max="5" value="@Model.Rating" />
+	</div>
+	<div class="form-group">
+		<label for="Content">Content:</label>
+		<input type="text" id="Content" name="Content" value="@Model.Content" />
+	</div>
+	<button type="submit">Update Review</button>
+</form>

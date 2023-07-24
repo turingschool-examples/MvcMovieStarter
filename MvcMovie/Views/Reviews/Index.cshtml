@@ -6,7 +6,7 @@
 
 @foreach (var review in Model.Reviews)
 {
-    <p>@review.Rating: @review.Content</p>
+	<p>@review.Rating: @review.Content <a href="/movies/@Model.Id/reviews/@review.Id/edit">Edit</a> </p>
 }
 
 <p>
