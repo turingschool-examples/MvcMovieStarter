@@ -53,5 +53,62 @@ namespace MvcMovie.FeatureTests
 
         }
 
+        /*
+         As a User
+            When I visit '/movies/1/edit'
+            Than I see a form to edit the movie
+            And I see that the Title and Genre for that movie
+                are pre-populated in the form.
+         */
+        [Fact]
+        public async Task Edit_DisplayFormPrePopulated()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie spaceballs = new Movie { Genre = "Comedy", Title = "Spaceballs" };
+            context.Movies.Add(spaceballs);
+            context.SaveChanges();
+
+            // Act
+            var response = await client.GetAsync($"/Movies/{spaceballs.Id}/edit");
+            var html = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            Assert.Contains(spaceballs.Title, html);
+            Assert.Contains(spaceballs.Genre, html);
+            Assert.Contains("Edit Movie", html);
+            Assert.Contains("form method=\"post\"", html);
+            Assert.Contains($"action=\"/movies/{spaceballs.Id}\"", html);
+        }
+
+        [Fact]
+        public async Task Update_SavesChangesToMovie()
+        {
+            // Arrange
+            var context = GetDbContext();
+            var client = _factory.CreateClient();
+
+            Movie movie = new Movie { Title = "Goofy", Genre = "Comedy" };
+            context.Movies.Add(movie);
+            context.SaveChanges();
+
+            var formData = new Dictionary<string, string>
+            {
+                { "Title", "Goofy" },
+                { "Genre", "Documentary" }
+            };
+
+            // Act
+            var response = await client.PostAsync($"/movies/{movie.Id}", new FormUrlEncodedContent(formData));
+            var html = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Contains("Goofy", html);
+            Assert.Contains("Documentary", html);
+            Assert.DoesNotContain("Comedy", html);
+        }
     }
 }

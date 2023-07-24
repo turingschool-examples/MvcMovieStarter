@@ -46,5 +46,23 @@ namespace MvcMovie.Controllers
             var movie = _context.Movies.Find(id);
             return View(movie);
         }
+
+        [Route("Movies/{id:int}/edit")]
+        public IActionResult Edit(int id)
+        {
+            var movie = _context.Movies.Find(id);
+            return View(movie);
+        }
+
+        [HttpPost]
+        [Route("Movies/{id:int}")]
+        public IActionResult Update(int id, Movie movie)
+        {
+            movie.Id = id;
+            _context.Movies.Update(movie);
+            _context.SaveChanges();
+
+            return RedirectToAction("show", new { id = movie.Id });
+        }
     }
 }
