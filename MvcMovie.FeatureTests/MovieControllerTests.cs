@@ -53,13 +53,6 @@ namespace MvcMovie.FeatureTests
 
         }
 
-        /*
-         As a User
-            When I visit '/movies/1/edit'
-            Than I see a form to edit the movie
-            And I see that the Title and Genre for that movie
-                are pre-populated in the form.
-         */
         [Fact]
         public async Task Edit_DisplayFormPrePopulated()
         {
@@ -109,6 +102,42 @@ namespace MvcMovie.FeatureTests
             Assert.Contains("Goofy", html);
             Assert.Contains("Documentary", html);
             Assert.DoesNotContain("Comedy", html);
+        }
+
+        [Fact]
+        public async Task Index_ContainsFilterForEachGenres()
+        {
+            var context = GetDbContext();
+            context.Movies.Add(new Movie { Genre = "Comedy", Title = "Spaceballs" });
+            context.Movies.Add(new Movie { Genre = "Comedy", Title = "Young Frankenstein" });
+            context.Movies.Add(new Movie { Genre = "Kids", Title = "Mulan" });
+            context.SaveChanges();
+
+            var client = _factory.CreateClient();
+            var response = await client.GetAsync("/Movies");
+            var html = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("<a href=\"/movies?genre=Comedy\">Comedy</a>", html);
+            Assert.Contains("<a href=\"/movies?genre=Kids\">Kids</a>", html);
+            Assert.DoesNotContain("<a href=\"/movies?genre=Spaceballs\">Spaceballs</a>", html);
+        }
+
+        [Fact]
+        public async Task Index_UsesGenreQueryStringParamToFilter()
+        {
+            var context = GetDbContext();
+            context.Movies.Add(new Movie { Genre = "Comedy", Title = "Spaceballs" });
+            context.Movies.Add(new Movie { Genre = "Comedy", Title = "Young Frankenstein" });
+            context.Movies.Add(new Movie { Genre = "Kids", Title = "Mulan" });
+            context.SaveChanges();
+
+            var client = _factory.CreateClient();
+            var response = await client.GetAsync("/Movies?genre=Comedy");
+            var html = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("Spaceballs", html);
+            Assert.Contains("Young Frankenstein", html);
+            Assert.DoesNotContain("Mulan", html);
         }
     }
 }
