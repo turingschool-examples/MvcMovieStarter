@@ -53,18 +53,25 @@ namespace MvcMovie.Controllers
 		}
 
 		[Route("Movies/{movieId:int}/reviews/{reviewId:int}/edit")]
-		public IActionResult Edit(int movieId, int reviewId)
+		public IActionResult Edit(int reviewId)
 		{
-			//var movie = _context.Movies
-			//	.Where(m => m.Id == movieId)
-			//	.Include(m => m.Reviews)
-			//	.First();
             var review = _context.Reviews
                 .Where(r => r.Id == reviewId)
                 .Include(r => r.Movie)
                 .First();
 
 			return View(review);
+		}
+
+		[HttpPut]
+		[Route("Movies/{movieId:int}/reviews")]
+		public IActionResult Update(int id, Review review)
+		{
+			review.Id = id;
+			_context.Reviews.Update(review);
+			_context.SaveChanges();
+
+			return RedirectToAction("index", new { id = review.Id });
 		}
 
 	}

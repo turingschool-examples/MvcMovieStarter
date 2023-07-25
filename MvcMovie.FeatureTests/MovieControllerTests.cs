@@ -20,7 +20,7 @@ namespace MvcMovie.FeatureTests
             _factory = factory;
         }
 
-        private MvcMovieContext GetDbContext()
+        private static MvcMovieContext GetDbContext()
         {
             var optionsBuilder = new DbContextOptionsBuilder<MvcMovieContext>();
             optionsBuilder.UseInMemoryDatabase("TestDatabase");

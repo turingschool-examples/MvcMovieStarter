@@ -26,7 +26,7 @@ namespace MvcMovie.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(Movie movie)
+        public IActionResult Create(Movie movie)
         {
             //Take the movie sent in the request and save it to the database
             _context.Movies.Add(movie);
