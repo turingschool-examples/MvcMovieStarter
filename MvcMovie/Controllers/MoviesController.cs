@@ -14,9 +14,15 @@ namespace MvcMovie.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? genre)
         {
-            var movies = _context.Movies;
+            var movies = _context.Movies.AsEnumerable();
+            if (genre != null)
+            {
+                movies = movies
+                    .Where(m => m.Genre == genre);
+            }
+
             return View(movies);
         }
 
