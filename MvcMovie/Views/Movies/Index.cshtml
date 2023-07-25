@@ -13,11 +13,17 @@
 }
 
 <p>
-<a href="/movies?genre=Kids">Kids</a> |
-<a href="/movies?genre=Holiday">Holiday</a> |
-<a href="/movies?genre=Drama">Drama</a> |
-<a href="/movies?genre=Comedy">Comedy</a> |
-<a href="/movies">All Movies</a> 
+    @if (allGenres.Count > 0)
+    {
+        foreach (var genre in allGenres)
+        {
+            <a href="/movies?genre=@genre">@genre</a>
+        }
+    }
+    else
+    {
+    <p>No genres available.</p>
+    }
 </p>
 
 <p>All of the movies data will be shown here!</p>
