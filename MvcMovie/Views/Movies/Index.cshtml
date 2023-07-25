@@ -1,8 +1,17 @@
 ﻿@model IEnumerable<MvcMovie.Models.Movie>
+@{
+    List<string> allGenres = ViewData["AllGenres"] as List<string>;
+}
 
 <h1>Movies</h1>
 
 <h2>Genre Filter</h2>
+
+@if (ViewData["SearchGenre"] != null)
+{
+    <p>Filtered by: @ViewData["SearchGenre"]</p>
+}
+
 <p>
 <a href="/movies?genre=Kids">Kids</a> |
 <a href="/movies?genre=Holiday">Holiday</a> |

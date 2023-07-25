@@ -19,9 +19,11 @@ namespace MvcMovie.Controllers
             var movies = _context.Movies.AsEnumerable();
             if (genre != null)
             {
-                movies = movies
-                    .Where(m => m.Genre == genre);
+                movies = movies.Where(m => m.Genre == genre);
+                ViewData["SearchGenre"] = genre;
             }
+
+            ViewData["AllGenres"] = _context.Movies.Select(m => m.Genre).Distinct().ToList();
 
             return View(movies);
         }
